@@ -166,7 +166,8 @@ app.post("/api/contact", async (req, res) => {
 // Static files
 app.use(express.static(path.join(__dirname, "dist")));
 
-app.get("/:any*", (req, res) => {
+// Use this specific syntax for Express 5 catch-all routes
+app.get("/:any(.*)", (req, res) => {
   res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 
