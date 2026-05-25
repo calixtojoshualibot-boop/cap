@@ -163,12 +163,21 @@ app.post("/api/contact", async (req, res) => {
   }
 });
 
-// Static files
-app.use(express.static(path.join(__dirname, "dist")));
+// Serve static files from the 'dist' directory
+const distPath = path.join(__dirname, "dist");
+app.use(express.static(distPath));
 
-// Use this specific syntax for Express 5 catch-all routes
+// API routes must come BEFORE the catch-all route
+// [Your existing API routes are already above this]
+
+// Use this specific syntax for Express 5 catch-all routes to support SPA
 app.get("/:any(.*)", (req, res) => {
-  res.sendFile(path.join(__dirname, "dist", "index.html"));
+  const indexPath = path.join(__dirname, "dist", "index.html");
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(404).send("Frontend build (dist/index.html) not found. Did you run npm run build?");
+  }
 });
 
 const PORT = process.env.PORT || 3000;
